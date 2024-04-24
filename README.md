@@ -5,16 +5,16 @@
 
 ## Packages
 
-- `lightning`: ... 
+- `lightning`: ...
 
 - `ray`: ...
 
 
 
 
-## Repo structure 
+## Repo structure
 
-
+`pre-commit install`
 
 # Base Experiments
 

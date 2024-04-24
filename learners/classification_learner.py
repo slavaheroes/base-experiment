@@ -1,16 +1,13 @@
 # Vanilla Classification Learner with Cross-Entropy Loss
 # https://lightning.ai/docs/pytorch/stable/common/lightning_module.html#hooks
 
-import lightning as L
 import torch
+import lightning as L
 import torchmetrics
 
+
 class VanillaClassificationLearner(L.LightningModule):
-    def __init__(self,
-                 model,
-                 optimizer,
-                 scheduler,
-                 config) -> None:
+    def __init__(self, model, optimizer, scheduler, config) -> None:
         super(VanillaClassificationLearner, self).__init__()
         self.save_hyperparameters(ignore=['model', 'optimizer', 'scheduler'])
 
@@ -21,35 +18,35 @@ class VanillaClassificationLearner(L.LightningModule):
 
         self.criterion = torch.nn.CrossEntropyLoss()
         self.validation_step_outputs = []
-        
+
         # define metrics
         self.accuracy = torchmetrics.classification.Accuracy(task="multiclass", num_classes=config['num_classes'])
         self.f1_score = torchmetrics.F1Score(task="multiclass", num_classes=config['num_classes'])
-    
+
     def forward(self, x):
         self.model(x)
-    
+
     def loss_fn(self, x, y):
         return self.criterion(x, y)
-    
+
     def on_train_start(self):
         pass
-    
+
     def on_train_epoch_start(self):
         pass
-    
+
     def training_step(self, batch, batch_idx):
         images, labels = batch
         outputs = self.model(images)
         loss = self.loss_fn(outputs, labels)
-        
+
         train_acc = self.accuracy(outputs, labels)
         train_f1 = self.f1_score(outputs, labels)
-        
+
         self.log('loss', loss, on_epoch=True, prog_bar=True)
         self.log('train_acc', train_acc, prog_bar=True, on_epoch=True)
         self.log('train_f1', train_f1, prog_bar=True, on_epoch=True)
-        
+
         return {'loss': loss}
 
     def on_train_epoch_end(self):
@@ -59,26 +56,25 @@ class VanillaClassificationLearner(L.LightningModule):
         images, labels = batch
         outputs = self.model(images)
         loss = self.loss_fn(outputs, labels)
-        
+
         accuracy = self.accuracy(outputs, labels)
         f1 = self.f1_score(outputs, labels)
         return self.validation_step_outputs.append({'valid_loss': loss, 'valid_accuracy': accuracy, 'valid_f1': f1})
-    
+
     def on_validation_epoch_end(self):
         outputs = self.validation_step_outputs
         mean_loss = torch.stack([x['valid_loss'] for x in outputs]).mean()
         mean_acc = torch.stack([x['valid_accuracy'] for x in outputs]).mean()
         mean_f1 = torch.stack([x['valid_f1'] for x in outputs]).mean()
-        
+
         self.log('avg_valid_loss', mean_loss)
         self.log('avg_valid_accuracy', mean_acc)
         self.log('avg_valid_f1', mean_f1)
 
         self.validation_step_outputs.clear()
-        
-        
+
     def on_fit_end(self):
         pass
-    
+
     def configure_optimizers(self):
         return [self.optimizer], [{"scheduler": self.scheduler, "interval": "epoch"}]

@@ -6,25 +6,19 @@ disable = [
     "missing-class-docstring",
     "missing-module-docstring",
     "invalid-name",
-    "too-few-public-methods"
+    "too-few-public-methods",
+    "consider-using-from-import",
+    "arguments-renamed",
+    "unused-argument",
+    "no-member",
+    "import-error",
+
 ]
 
 [tool.black]
 line-length = 130
 target-version = ['py310']
-include = '\.pyi?$'
-exclude = '''
-/(
-    \.git
-| \.hg
-| \.mypy_cache
-| \.tox
-| \.venv
-| _build
-| buck-out
-| build
-)/
-'''
+skip-string-normalization = true
 
 [tool.isort]
 multi_line_output = 3
