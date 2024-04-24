@@ -1,0 +1,32 @@
+# basic libs
+numpy
+pandas
+scikit-learn
+matplotlib
+seaborn
+scipy
+
+# deep learning
+torchvision
+transformers
+lightning
+torchmetrics
+ray[data,train,tune,serve]
+
+# image processing
+Pillow
+opencv-python
+
+# experiment tracking
+wandb
+
+# utilities
+tqdm
+pre-commit
+black
+isort
+pylint
+
+# notebooks
+jupyter
+ipywidgets

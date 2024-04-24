@@ -1,0 +1,35 @@
+[tool.pylint.messages_control]
+
+disable = [
+    "missing-function-docstring",
+    "missing-final-newline",
+    "missing-class-docstring",
+    "missing-module-docstring",
+    "invalid-name",
+    "too-few-public-methods"
+]
+
+[tool.black]
+line-length = 130
+target-version = ['py310']
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+| \.hg
+| \.mypy_cache
+| \.tox
+| \.venv
+| _build
+| buck-out
+| build
+)/
+'''
+
+[tool.isort]
+multi_line_output = 3
+length_sort = true
+atomic = true
+profile = "black"
+line_length = 130
+skip_gitignore = true
