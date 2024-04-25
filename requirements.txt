@@ -1,6 +1,7 @@
 # basic libs
 numpy
 pandas
+PyYAML
 scikit-learn
 matplotlib
 seaborn

@@ -1,6 +1,18 @@
 
-build:
+setup: # install pre-commit hooks
+	...
+
+build: # build docker
+	...
+
+run: # run docker
+	...
+
+build-run: # build and run docker
 	...
 
 commit-push:
+	...
+
+train:
 	...

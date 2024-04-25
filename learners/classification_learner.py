@@ -6,9 +6,9 @@ import lightning as L
 import torchmetrics
 
 
-class VanillaClassificationLearner(L.LightningModule):
+class ClassificationLearner(L.LightningModule):
     def __init__(self, model, optimizer, scheduler, config) -> None:
-        super(VanillaClassificationLearner, self).__init__()
+        super(ClassificationLearner, self).__init__()
         self.save_hyperparameters(ignore=['model', 'optimizer', 'scheduler'])
 
         self.model = model
@@ -20,8 +20,10 @@ class VanillaClassificationLearner(L.LightningModule):
         self.validation_step_outputs = []
 
         # define metrics
-        self.accuracy = torchmetrics.classification.Accuracy(task="multiclass", num_classes=config['num_classes'])
-        self.f1_score = torchmetrics.F1Score(task="multiclass", num_classes=config['num_classes'])
+        self.accuracy = torchmetrics.classification.Accuracy(
+            task="multiclass", num_classes=config['model']['args']['num_classes']
+        )
+        self.f1_score = torchmetrics.F1Score(task="multiclass", num_classes=config['model']['args']['num_classes'])
 
     def forward(self, x):
         self.model(x)
@@ -43,9 +45,9 @@ class VanillaClassificationLearner(L.LightningModule):
         train_acc = self.accuracy(outputs, labels)
         train_f1 = self.f1_score(outputs, labels)
 
-        self.log('loss', loss, on_epoch=True, prog_bar=True)
-        self.log('train_acc', train_acc, prog_bar=True, on_epoch=True)
-        self.log('train_f1', train_f1, prog_bar=True, on_epoch=True)
+        self.log('loss', loss, on_epoch=True, prog_bar=True, sync_dist=True)
+        self.log('train_acc', train_acc, prog_bar=False, on_epoch=True, sync_dist=True)
+        self.log('train_f1', train_f1, prog_bar=False, on_epoch=True, sync_dist=True)
 
         return {'loss': loss}
 
@@ -67,9 +69,9 @@ class VanillaClassificationLearner(L.LightningModule):
         mean_acc = torch.stack([x['valid_accuracy'] for x in outputs]).mean()
         mean_f1 = torch.stack([x['valid_f1'] for x in outputs]).mean()
 
-        self.log('avg_valid_loss', mean_loss)
-        self.log('avg_valid_accuracy', mean_acc)
-        self.log('avg_valid_f1', mean_f1)
+        self.log('avg_valid_loss', mean_loss, sync_dist=True)
+        self.log('avg_valid_accuracy', mean_acc, sync_dist=True)
+        self.log('avg_valid_f1', mean_f1, sync_dist=True)
 
         self.validation_step_outputs.clear()
 

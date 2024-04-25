@@ -24,6 +24,6 @@
 
 # To Do
 
-- [ ] Distributed Training for LLMs
-- [ ] Add tutorial for DCGAN
-- [ ] Ray Serve
+- [ ] Repo description and Reproducibility
+- [ ] FSDP Distributed Training for LLMs
+- [ ] Ray Tune
