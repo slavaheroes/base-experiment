@@ -71,6 +71,6 @@ trainer:
   val_check_interval: 0.5 # twice in one epoch
   num_sanity_val_steps: 0
   gradient_clip_val: Null
-  limit_train_batches: 0.1 # might be useful for debugging
+  limit_train_batches: 0.25 # might be useful for debugging
   limit_val_batches: 0.5
   overfit_batches: 0.0

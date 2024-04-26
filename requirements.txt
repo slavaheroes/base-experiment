@@ -27,6 +27,7 @@ pre-commit
 black
 isort
 pylint
+gputil
 
 # notebooks
 jupyter
