@@ -18,7 +18,7 @@ build-run: # build and run docker
 commit: # commit changes
 	pre-commit run --all-files
 	git add .
-	git commit -m $(MSG)
+	git commit -m "$(MSG)"
 
 push: # push changes
 	git push
@@ -26,6 +26,3 @@ push: # push changes
 commit-push: # commit and push changes
 	make commit
 	make push
-
-train:
-	...
