@@ -1,6 +1,6 @@
 # general hyperparameters
 project: base-experiments
-exp_name: wide_resnet_cifar_ddp
+name: wide_resnet_cifar_ddp
 max_epochs: 10
 
 train_strategy: ddp

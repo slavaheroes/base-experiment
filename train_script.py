@@ -12,7 +12,7 @@ def define_logger(cfg):
 
     logger = L.pytorch.loggers.WandbLogger(
         project=cfg['project'],
-        name=cfg['exp_name'],
+        name=cfg['name'],
     )
 
     return logger

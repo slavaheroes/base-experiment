@@ -9,6 +9,7 @@ from ray.train import RunConfig, ScalingConfig, CheckpointConfig
 from ray.train.torch import TorchTrainer
 from ray.train.lightning import RayDDPStrategy, RayTrainReportCallback, RayLightningEnvironment, prepare_trainer
 from ray.tune.schedulers import ASHAScheduler
+from ray.air.integrations.wandb import WandbLoggerCallback, setup_wandb
 from ray.tune.integration.pytorch_lightning import TuneReportCheckpointCallback
 
 import utils
@@ -16,7 +17,6 @@ from learners.classification_learner import ClassificationLearner
 
 
 def train_func(cfg):
-
     # make dataset + dataloaders
     train_ds, test_ds = utils.make_dataset(cfg)
     train_loader = torch.utils.data.DataLoader(
@@ -98,21 +98,17 @@ if __name__ == '__main__':
     cfg = utils.read_yaml_file(args.config_path)
 
     # Ray Trainer definition
-
     scaling_config = ScalingConfig(
         num_workers=torch.cuda.device_count(), use_gpu=True, resources_per_worker={"CPU": 10, "GPU": 1}
     )
 
     run_config = RunConfig(
         name="tune_experiments",
-        checkpoint_config=CheckpointConfig(
-            num_to_keep=2,
-            checkpoint_score_attribute="avg_valid_loss",
-            checkpoint_score_order="min",
-        ),
         progress_reporter=CLIReporter(
             metric_columns=["loss", "accuracy"],
         ),
+        callbacks=[WandbLoggerCallback(project=cfg["project"] + '_tune', log_config=True, entity='slavaheroes')],
+        storage_path='/SSD/slava/ray-tune-experiments/',
     )
 
     ray_trainer = TorchTrainer(
@@ -123,13 +119,13 @@ if __name__ == '__main__':
 
     # Ray Tune definition
 
-    scheduler = ASHAScheduler(max_t=cfg['max_epochs'], grace_period=1, reduction_factor=2)
+    scheduler = ASHAScheduler(max_t=cfg['max_epochs'], grace_period=5, reduction_factor=2)
 
     # define search space
     # TODO: load from config file
 
     cfg['optimizer']['args']['lr'] = tune.grid_search([1e-4, 1e-3])
-    cfg['dataset']['batch_size'] = tune.grid_search([64, 128])
+    cfg['dataset']['batch_size'] = tune.grid_search([16, 32, 64])
 
     tuner = tune.Tuner(
         ray_trainer,
@@ -137,7 +133,7 @@ if __name__ == '__main__':
         tune_config=tune.TuneConfig(
             metric="loss",
             mode="min",
-            num_samples=1,  # number of random samples per grid search combination
+            num_samples=2,  # number of random samples per grid search combination
             scheduler=scheduler,
         ),
     )
