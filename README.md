@@ -26,4 +26,4 @@
 
 - [ ] Repo description and Reproducibility
 - [ ] FSDP Distributed Training for LLMs
-- [ ] Ray Tune
+- [ ] Multi-node Training

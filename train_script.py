@@ -11,6 +11,7 @@ from learners.classification_learner import ClassificationLearner
 def define_logger(cfg):
 
     logger = L.pytorch.loggers.WandbLogger(
+        entity='slavaheroes',
         project=cfg['project'],
         name=cfg['name'],
     )
@@ -57,7 +58,7 @@ def train_func(cfg):
 
     if cfg['ModelCheckpoint']['enable']:
         model_checkpoint = L.pytorch.callbacks.ModelCheckpoint(
-            dirpath=os.path.join('./', cfg['ModelCheckpoint']['dirpath']),
+            dirpath=os.path.join('/mnt', cfg['ModelCheckpoint']['dirpath'] + "_" + cfg['project'], cfg['name']),
             filename=cfg['ModelCheckpoint']['filename'],
             **cfg['ModelCheckpoint']['args'],
         )

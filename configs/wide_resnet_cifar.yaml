@@ -11,7 +11,7 @@ dataset:
   name: cifar10
   batch_size: 128
   num_workers: 8
-  data_dir: /SSD/slava
+  data_dir: /mnt
   transforms: basic
 
 # model configuration
